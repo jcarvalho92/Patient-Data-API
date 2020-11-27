@@ -34,8 +34,7 @@ router.post('/', async (req, res) => {
       return;
     }
 
-    const patient = {
-    id: patients.length +1,
+    let patient = new Patient({
     dateIncluded: req.body.dateIncluded,
     patientName: req.body.patientName,
     age: req.body.age,
@@ -46,10 +45,10 @@ router.post('/', async (req, res) => {
     province: req.body.province,
     postcode: req.body.postcode,
     mobNumb: req.body.mobNumb,
-    email: req.body.email,
-    };
-    //storing the data in-memory 
-    await patients.push(patient);
+    email: req.body.email
+    });
+
+    patient = await patient.save();
 
     res.send(patient);
 });
