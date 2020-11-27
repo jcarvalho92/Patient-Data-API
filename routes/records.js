@@ -1,4 +1,4 @@
-const {Record, validate} = require('../models/record'); 
+const {PatientRecords} = require('../models/record'); 
 const {Patient} = require('../models/patient'); 
 const mongoose = require('mongoose');
 const express = require('express');
@@ -7,17 +7,20 @@ const Joi = require('joi');
 
 
 //getting patient's record by patient id
-router.get('/', async (req, res) => {
-  const records = await Record.find({ patient_id: req.params.id });
+router.get('/:id/records', async (req, res) => {
+  const records = await PatientRecords.find({ patient_id: req.params.id });
+
+  if (!records) return res.status(404).send('No record with the given patient id was found');
+
   res.send(records);
 });
 
-router.post('/', async (req, res) => {
+router.post('/:id/records', async (req, res) => {
  
   //validanting the input
   const schema = Joi.object({ 
-    dateIncluded: Joi.date().required(),
-    doctor: Joi.string().min(3).max(50).required(),
+    //dateIncluded: Joi.date(),//.required(),
+    //doctor: Joi.string().min(3).max(50),//.required(),
     bloodPressure : Joi.string().min(5).max(10).required(), 
     respiratoryRate : Joi.string().min(1).max(3).required(),
     bloodOxygen : Joi.string().min(2).max(4).required(),
@@ -27,7 +30,7 @@ router.post('/', async (req, res) => {
     temperature : Joi.string().min(2).max(5).required()
    });
     
-    const result = schema.validate(req.body);
+   const result = schema.validate(req.body);
 
     if (result.error){
       //400 bad request
@@ -35,24 +38,12 @@ router.post('/', async (req, res) => {
       return;
     }
 
-    const patient = await Patient.find({ patient_id: req.params.id });
-   if (!patient) return res.status(400).send('Invalid patient Id.');
+    const patient =  Patient.findById(req.params.id);
+   if (!patient) 
+      return res.status(400).send('Invalid patient Id.');
 
-    let record = new Record({ 
-      patient: {
-          _id: patient._id,
-          dateIncluded: patient.dateIncluded,
-          patientName: patient.patientName,
-          age: patient.age,
-          gender: patient.gender,
-          addr1: patient.addr1,
-          addr2: patient.addr2,
-          city: patient.city,
-          province: patient.province,
-          postcode: patient.postcode,
-          mobNumb: patient.mobNumb,
-          email: patient.email
-      },
+    let record = new PatientRecords({ 
+      patient_id: req.params.id,
       dateIncluded: req.body.dateIncluded,
       doctor: req.body.doctor,
       bloodPressure : req.body.bloodPressure,  
@@ -65,10 +56,27 @@ router.post('/', async (req, res) => {
   
     });
 
-    record = await record.save();
-
+    record =  await record.save();
     res.send(record);
   
+});
+
+router.get('/:id/records', async (req, res) => {
+  const records = await PatientRecords.find({ patient_id: req.params.id });
+
+  if (!records) return res.status(404).send('No record with the given patient id was found');
+
+  res.send(records);
+});
+
+router.get('/name/:name/records', async (req, res) => {
+  
+  const patient = await Patient.findOne({patientName: req.params.name})
+  const records = await PatientRecords.find({ patient_id: patient._id });
+
+  if (!records) return res.status(404).send('No record with the given patient name was found');
+
+  res.send(records);
 });
 
 module.exports = router; 

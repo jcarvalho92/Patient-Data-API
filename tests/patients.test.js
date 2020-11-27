@@ -1,13 +1,12 @@
 const request = require('supertest');
-const {Patient} = require('../../models/patient');
+const {Patient} = require('../models/patient');
 const mongoose = require('mongoose');
 
-//to get the server from index.js
 let server;
 
 describe('/api/patients', () => {
   beforeEach(() => { //call this function before each test
-    server = require('../../index');//initialization
+    server = require('../index');//initialization
    })
   afterEach(async () => { 
     server.close(); //closing (we should close after each test)
@@ -70,12 +69,6 @@ describe('/api/patients', () => {
       expect(res.status).toBe(404);
     });
 
-    it('should return 404 if no patient with the given id exists', async () => {
-      const id = mongoose.Types.ObjectId();
-      const res = await request(server).get('/api/patients/' + id);
-
-      expect(res.status).toBe(404);
-    });
   });
 
   describe('POST /', () => {
@@ -137,5 +130,60 @@ describe('/api/patients', () => {
     });
 
   });
+
+  describe('DELETE /:id', () => {
+    let patient; 
+    let id; 
+
+    const exec = async () => {
+      return await request(server)
+        .delete('/api/patients/' + id)
+        .send();
+    }
+
+    beforeEach(async () => {
+      // Before each test we need to create a patient and 
+      // put it in the database.      
+      const patient = new Patient({ 
+        patientName: "patient1",
+        dateIncluded: "2020-11-26",
+        age: "1",
+        gender: "F",
+        addr1: "1 street",
+        city: "Toronto",
+        province: "Ontario",
+        postcode: "a1a1a1",
+        mobNumb: "4370001111",
+        email: "test@gmail.com"
+      });
+      await patient.save();
+      
+      id = patient._id; 
+    })
+
+    it('should return 404 if id is invalid', async () => {
+      id = mongoose.Types.ObjectId();
+      
+      const res = await exec();
+
+      expect(res.status).toBe(404);
+    });
+
+    it('should return 404 if no patient with the given id was found', async () => {
+      id = mongoose.Types.ObjectId();
+
+      const res = await exec();
+
+      expect(res.status).toBe(404);
+    });
+
+    it('should delete the patient if input is valid', async () => {
+      await exec();
+
+      const patientInDb = await Patient.findById(id);
+
+      expect(patientInDb).toBeNull();
+    });
+  });  
 
 });

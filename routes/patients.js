@@ -14,7 +14,6 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   //validanting the input
   const schema = Joi.object({ 
-    name: Joi.string().min(3).max(50).required(),
     dateIncluded: Joi.date().required(),
     patientName: Joi.string().min(5).max(50).required(),
     age: Joi.number().min(1).required(),
@@ -55,30 +54,6 @@ router.post('/', async (req, res) => {
     res.send(patient);
 });
 
-router.put('/:id', async (req, res) => {
-  const { error } = validate(req.body); 
-  if (error) return res.status(400).send(error.details[0].message);
-
-  const patient = await Patient.findByIdAndUpdate(req.params.id,
-    { 
-        dateIncluded: req.body.dateIncluded,
-        patientName: req.body.patientName,
-        age: req.body.age,
-        gender: req.body.gender,
-        addr1: req.body.addr1,
-        addr2: req.body.addr2,
-        city: req.body.city,
-        province: req.body.province,
-        postcode: req.body.postcode,
-        mobNumb: req.body.mobNumb,
-        email: req.body.email
-    }, { new: true });
-
-  if (!patient) return res.status(404).send('The patient with the given ID was not found.');
-  
-  res.send(patient);
-});
-
 router.delete('/:id', async (req, res) => {
   const patient = await Patient.findByIdAndRemove(req.params.id);
 
@@ -92,6 +67,14 @@ router.get('/:id', async (req, res) => {
 
   if (!patient) return res.status(404).send('The patient with the given ID was not found.');
 
+  res.send(patient);
+});
+
+router.get('/name/:name', async (req, res) => {
+  
+  const patient = await Patient.findOne({patientName: req.params.name})
+
+  if (!patient) return res.status(404).send('The patient with the given name was not found.');
   res.send(patient);
 });
 

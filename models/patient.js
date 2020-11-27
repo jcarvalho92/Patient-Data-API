@@ -22,7 +22,6 @@ var Patient = mongoose.model('Patient', patientSchema);
 
 function validatePatient(patient) {
   const schema = {
-    name: Joi.string().min(3).max(50).required(),
     dateIncluded: Joi.date().required(),
     patientName: Joi.string().min(5).max(50).required(),
     age: Joi.number().min(1).required(),

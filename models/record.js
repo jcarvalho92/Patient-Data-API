@@ -22,7 +22,6 @@ var PatientRecords = mongoose.model('PatientRecords', patientRecordsSchema);
 
 function validateRecord(record) {
   const schema = {
-    patientId: Joi.objectId().required(),
     dateIncluded: Joi.date().required(),
     doctor: Joi.string().min(3).max(50).required(),
     bloodPressure : Joi.string().min(5).max(10).required(), 
@@ -37,5 +36,5 @@ function validateRecord(record) {
   return Joi.validate(record, schema);
 }
 
-exports.Record = PatientRecords; 
+exports.PatientRecords = PatientRecords; 
 exports.validate = validateRecord;
