@@ -78,4 +78,64 @@ describe('/api/patients', () => {
     });
   });
 
+  describe('POST /', () => {
+
+
+    let patient = {}; 
+    let patientName;
+    let dateIncluded;
+    let age;
+    let gender;
+    let addr1;
+    let city;
+    let province;
+    let postcode;
+    let mobNumb;
+    let email;
+
+    beforeEach(() => {  
+      patient =  {
+        "patientName": patientName,
+        "dateIncluded": dateIncluded,
+        "age": age,
+        "gender": gender,
+        "addr1": addr1,
+        "city": city,
+        "province": province,
+        "postcode": postcode,
+        "mobNumb": mobNumb,
+        "email": email
+    }
+    })
+
+    const exec = async () => {
+      return await request(server)
+        .post('/api/patients')
+        .send(patient);
+    }
+
+    it('should return 400 if any field has less than the minimum required or more than the maximum required', async () => {
+          patientName = "123",
+          dateIncluded = Date.now,
+          age = "1",
+          gender = "1",
+          addr1 = "12345",
+          city = "123",
+          province = "123",
+          postcode = "123456",
+          mobNumb = "12345",
+          email = "1234567890"
+
+      const res = await exec();
+      expect(res.status).toBe(400);
+    });
+
+    it('should save the patient if it is valid', async () => {
+      await exec();
+      const patient = await Patient.find({ patientName: 'patient1' });
+      expect(patient).not.toBeNull();// we expect patient not to be null as it exist in the database
+    });
+
+  });
+
 });
