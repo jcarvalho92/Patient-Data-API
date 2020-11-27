@@ -49,7 +49,7 @@ router.post('/', async (req, res) => {
     email: req.body.email,
     };
     //storing the data in-memory 
-    patients.push(patient);
+    await patients.push(patient);
 
     res.send(patient);
 });
