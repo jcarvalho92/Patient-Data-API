@@ -19,8 +19,6 @@ router.post('/:id/records', async (req, res) => {
  
   //validanting the input
   const schema = Joi.object({ 
-    //dateIncluded: Joi.date(),//.required(),
-    //doctor: Joi.string().min(3).max(50),//.required(),
     bloodPressure : Joi.string().min(5).max(10).required(), 
     respiratoryRate : Joi.string().min(1).max(3).required(),
     bloodOxygen : Joi.string().min(2).max(4).required(),
