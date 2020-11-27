@@ -1,69 +1,24 @@
 const Joi = require('joi');
 const mongoose = require('mongoose');
 
-const Patient = mongoose.model('Patient', new mongoose.Schema({
-  dateIncluded: {
-    type: Date, 
-    required: true,
-    default: Date.now
-  },
-  patientName: {
-    type: String,
-    required: true,
-    minlength: 3,
-    maxlength: 50
-  },
-  age: {
-    type: Number, 
-    required: true,
-    min: 1
-  },
-  gender: {
-    type: String,
-    required: true,
-    minlength: 1,
-    maxlength: 1
-  },
-  addr1: {
-    type: String,
-    required: true,
-    minlength: 5,
-    maxlength: 255
-  },
-  addr2: {
-    type: String
-  },
-  city: {
-    type: String,
-    required: true,
-    minlength: 3,
-    maxlength: 30
-  },
-  province: {
-    type: String,
-    required: true,
-    minlength: 3,
-    maxlength: 30
-  },
-  postcode: {
-    type: String,
-    required: true,
-    minlength: 6,
-    maxlength: 6
-  },
-  mobNumb: {
-    type: String,
-    required: true,
-    minlength: 5,
-    maxlength: 12
-  },
-  email: {
-    type: String,
-    required: true,
-    minlength: 10,
-    maxlength: 50
-  }   
-}));
+var patientSchema = new mongoose.Schema({
+  dateIncluded: Date,
+  patientName: String, 
+  age: String, 
+  gender: String,  
+  addr1: String, 
+  addr2: String, 
+  city: String, 
+  province: String, 
+  postcode: String,  
+  mobNumb: String,  
+  email: String, 
+});
+
+// Compiles the schema into a model, opening (or creating, if
+// nonexistent) the 'Patient' collection in the MongoDB database
+var Patient = mongoose.model('Patient', patientSchema);
+
 
 function validatePatient(patient) {
   const schema = {
