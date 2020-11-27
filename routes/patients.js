@@ -14,17 +14,19 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   //validanting the input
   const schema = Joi.object({ 
-    dateIncluded: Joi.date() .required(),
-    patientName: Joi.string() .required(),
-    age: Joi.number() .required(),
-    gender: Joi.string() .required(),
-    addr1: Joi.string() .required(),
+    name: Joi.string().min(3).max(50).required(),
+    dateIncluded: Joi.date().required(),
+    patientName: Joi.string().min(5).max(50).required(),
+    age: Joi.number().min(1).required(),
+    gender: Joi.string().min(1).max(1).required(),
+    addr1: Joi.string().min(5).max(255).required(),
     addr2: Joi.string() ,
-    city: Joi.string() .required(),
-    province: Joi.string()  .required(),
-    postcode: Joi.string() .max(7) .required(),
-    mobNumb: Joi.string() .required(),
-    email: Joi.string() .required() });
+    city: Joi.string().min(3).max(30).required(),
+    province: Joi.string().min(3).max(30).required(),
+    postcode: Joi.string().min(6).max(6).required(),
+    mobNumb: Joi.string().min(5).max(12).required(),
+    email: Joi.string().min(10).max(50).required()
+   });
     
     const result = schema.validate(req.body);
 
