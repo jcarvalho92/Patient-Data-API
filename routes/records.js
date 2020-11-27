@@ -16,7 +16,6 @@ router.post('/', async (req, res) => {
  
   //validanting the input
   const schema = Joi.object({ 
-    patientId: Joi.objectId().required(),
     dateIncluded: Joi.date().required(),
     doctor: Joi.string().min(3).max(50).required(),
     bloodPressure : Joi.string().min(5).max(10).required(), 
