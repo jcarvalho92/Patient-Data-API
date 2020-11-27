@@ -35,7 +35,7 @@ router.post('/', async (req, res) => {
       return;
     }
 
-    const patient = await Patient.findById(req.params.id );
+    const patient = await Patient.find({ patient_id: req.params.id });
    if (!patient) return res.status(400).send('Invalid patient Id.');
 
     let record = new Record({ 
