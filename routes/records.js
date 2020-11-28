@@ -19,13 +19,16 @@ router.post('/:id/records', async (req, res) => {
  
   //validanting the input
   const schema = Joi.object({ 
+    dateIncluded : Joi.date(),
+    doctor : Joi.string(),
     bloodPressure : Joi.string().min(5).max(10).required(), 
     respiratoryRate : Joi.string().min(1).max(3).required(),
     bloodOxygen : Joi.string().min(2).max(4).required(),
     heartbeatRate : Joi.string().min(2).max(10).required(),
     weight : Joi.string().min(1).max(3).required(),
     height : Joi.string().min(3).max(4).required(),
-    temperature : Joi.string().min(2).max(5).required()
+    temperature : Joi.string().min(2).max(5).required(),
+    status : Joi.string().required()
    });
     
    const result = schema.validate(req.body);
@@ -50,8 +53,8 @@ router.post('/:id/records', async (req, res) => {
       heartbeatRate : req.body.heartbeatRate, 
       weight : req.body.weight, 
       height : req.body.height, 
-      temperature : req.body.temperature 
-  
+      temperature : req.body.temperature, 
+      status: req.body.status
     });
 
     record =  await record.save();
@@ -59,22 +62,29 @@ router.post('/:id/records', async (req, res) => {
   
 });
 
-router.get('/:id/records', async (req, res) => {
-  const records = await PatientRecords.find({ patient_id: req.params.id });
-
-  if (!records) return res.status(404).send('No record with the given patient id was found');
-
-  res.send(records);
-});
-
 router.get('/name/:name/records', async (req, res) => {
   
   const patient = await Patient.findOne({patientName: req.params.name})
-  const records = await PatientRecords.find({ patient_id: patient._id });
-
+  const records = await PatientRecords.findOne({ patient_id: patient._id });
+  
   if (!records) return res.status(404).send('No record with the given patient name was found');
 
-  res.send(records);
+  const patientRecords = {
+    patient_id: patient._id,
+    patientName: patient.patientName,
+    dateIncluded: records.dateIncluded,
+    doctor: records.doctor,
+    bloodPressure : records.bloodPressure,  
+    respiratoryRate : records.respiratoryRate, 
+    bloodOxygen : records.bloodOxygen, 
+    heartbeatRate : records.heartbeatRate, 
+    weight : records.weight, 
+    height : records.height, 
+    temperature : records.temperature,
+    status: records.status 
+  }
+ 
+  res.send(patientRecords);
 });
 
 module.exports = router; 

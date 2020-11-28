@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 var patientRecordsSchema = new mongoose.Schema({
   patient_id:[
-    {type: mongoose.Schema.Types.ObjectId, ref: 'Patient'}
+    {type: mongoose.Schema.Types.ObjectId, ref: 'patient'}
   ], 
   dateIncluded: Date,
   doctor: String,
@@ -14,11 +14,12 @@ var patientRecordsSchema = new mongoose.Schema({
   weight : String, 
   height : String, 
   temperature : String, 
+  status: String
 });
 
 // Compiles the schema into a model, opening (or creating, if
 // nonexistent) the 'PatientRecords' collection in the MongoDB database
-var PatientRecords = mongoose.model('PatientRecords', patientRecordsSchema);
+var PatientRecords = mongoose.model('patient_records', patientRecordsSchema);
 
 function validateRecord(record) {
   const schema = {
